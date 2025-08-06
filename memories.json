@@ -1,0 +1,23 @@
+{
+  "memories": [
+    {
+      "id": "mem_1754427263285_k6v5yzgjt",
+      "content": "QR code debug issue SOLVED: Google Charts API is returning 404 errors - the service has been discontinued or URL changed. URL generation is correct (http://woo-test.local/new-test) but Google API no longer works. Need to switch to alternative QR generation method.",
+      "type": "troubleshooting",
+      "tags": [
+        "troubleshooting",
+        "api",
+        "debug",
+        "qr-code",
+        "url-generation"
+      ],
+      "timestamp": "2025-08-05T20:54:23.285Z",
+      "context": "Hoppr plugin QR code generation debugging",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-05T20:54:23.285Z",
+      "lastVerified": "2025-08-05T20:54:23.285Z",
+      "status": "fresh"
+    }
+  ],
+  "lastUpdated": "2025-08-05T20:56:16.563Z"
+}
