@@ -25,17 +25,18 @@ class Hoppr_Analytics {
         }
     }
     
+    /**
+     * Track a redirect click with analytics data.
+     * 
+     * @param array $data Analytics data including redirect_id, ip_address, user_agent, referrer, country_code, device_type.
+     * @return bool True on success, false on failure.
+     */
     public function track_click($data) {
         global $wpdb;
         
-        // Debug logging for production troubleshooting
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('Hoppr: Attempting to track click for redirect ID ' . $data['redirect_id']);
-        }
         
         // Verify table exists
         if (!$this->verify_table_exists()) {
-            error_log('Hoppr: Analytics table does not exist - ' . $this->table_name);
             return false;
         }
         
@@ -61,17 +62,19 @@ class Hoppr_Analytics {
         );
         
         if ($result === false) {
-            error_log('Hoppr: Failed to track click for redirect ID ' . $data['redirect_id'] . '. DB Error: ' . $wpdb->last_error);
-            error_log('Hoppr: Insert data: ' . print_r($insert_data, true));
-        } else {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('Hoppr: Successfully tracked click for redirect ID ' . $data['redirect_id']);
-            }
+            return false;
         }
         
         return $result !== false;
     }
     
+    /**
+     * Get analytics data for a specific redirect.
+     * 
+     * @param int $redirect_id The redirect ID.
+     * @param array $args Query arguments including date_from, date_to, limit.
+     * @return array Array of analytics records.
+     */
     public function get_redirect_analytics($redirect_id, $args = array()) {
         global $wpdb;
         
@@ -100,7 +103,7 @@ class Hoppr_Analytics {
                 {$group_by} as period,
                 COUNT(*) as clicks,
                 COUNT(DISTINCT ip_address) as unique_clicks
-            FROM {$this->table_name} 
+            FROM `" . esc_sql($this->table_name) . "` 
             WHERE {$where}
             GROUP BY period
             ORDER BY period ASC
@@ -130,7 +133,7 @@ class Hoppr_Analytics {
             $where_values[] = $args['date_to'];
         }
         
-        $query = "SELECT COUNT(*) FROM {$this->table_name} WHERE {$where}";
+        $query = "SELECT COUNT(*) FROM `" . esc_sql($this->table_name) . "` WHERE {$where}";
         
         if (!empty($where_values)) {
             $query = $wpdb->prepare($query, $where_values);
@@ -160,7 +163,7 @@ class Hoppr_Analytics {
             $where_values[] = $args['date_to'];
         }
         
-        $query = "SELECT COUNT(DISTINCT ip_address) FROM {$this->table_name} WHERE {$where}";
+        $query = "SELECT COUNT(DISTINCT ip_address) FROM `" . esc_sql($this->table_name) . "` WHERE {$where}";
         
         if (!empty($where_values)) {
             $query = $wpdb->prepare($query, $where_values);
@@ -169,9 +172,14 @@ class Hoppr_Analytics {
         return intval($wpdb->get_var($query));
     }
     
+    /**
+     * Get the total number of clicks across all redirects.
+     * 
+     * @return int Total click count.
+     */
     public function get_total_clicks() {
         global $wpdb;
-        return intval($wpdb->get_var("SELECT COUNT(*) FROM {$this->table_name}"));
+        return intval($wpdb->get_var("SELECT COUNT(*) FROM `" . esc_sql($this->table_name) . "`"));
     }
     
     public function get_clicks_by_country($args = array()) {
@@ -210,7 +218,7 @@ class Hoppr_Analytics {
                 country_code,
                 COUNT(*) as clicks,
                 COUNT(DISTINCT ip_address) as unique_clicks
-            FROM {$this->table_name} 
+            FROM `" . esc_sql($this->table_name) . "` 
             WHERE {$where}
             GROUP BY country_code 
             ORDER BY clicks DESC 
@@ -257,7 +265,7 @@ class Hoppr_Analytics {
                 device_type,
                 COUNT(*) as clicks,
                 COUNT(DISTINCT ip_address) as unique_clicks
-            FROM {$this->table_name} 
+            FROM `" . esc_sql($this->table_name) . "` 
             WHERE {$where}
             GROUP BY device_type 
             ORDER BY clicks DESC
@@ -270,6 +278,12 @@ class Hoppr_Analytics {
         return $wpdb->get_results($query, ARRAY_A);
     }
     
+    /**
+     * Get daily click statistics.
+     * 
+     * @param array $args Query arguments including date_from, date_to, redirect_id.
+     * @return array Array of daily click data with dates and counts.
+     */
     public function get_daily_clicks($args = array()) {
         global $wpdb;
         
@@ -302,7 +316,7 @@ class Hoppr_Analytics {
             SELECT 
                 DATE(click_timestamp) as date,
                 COUNT(*) as clicks
-            FROM {$this->table_name} 
+            FROM `" . esc_sql($this->table_name) . "` 
             WHERE {$where}
             GROUP BY DATE(click_timestamp) 
             ORDER BY date ASC
@@ -376,7 +390,7 @@ class Hoppr_Analytics {
             SELECT 
                 referrer,
                 COUNT(*) as clicks
-            FROM {$this->table_name} 
+            FROM `" . esc_sql($this->table_name) . "` 
             WHERE {$where}
             GROUP BY referrer 
             ORDER BY clicks DESC 
@@ -424,8 +438,8 @@ class Hoppr_Analytics {
                 r.destination_url,
                 COUNT(a.id) as click_count,
                 COUNT(DISTINCT a.ip_address) as unique_clicks
-            FROM {$redirects_table} r
-            LEFT JOIN {$this->table_name} a ON r.id = a.redirect_id
+            FROM `" . esc_sql($redirects_table) . "` r
+            LEFT JOIN `" . esc_sql($this->table_name) . "` a ON r.id = a.redirect_id
             WHERE {$where} AND r.status = 'active'
             GROUP BY r.id 
             ORDER BY click_count DESC 
@@ -439,6 +453,11 @@ class Hoppr_Analytics {
         return $wpdb->get_results($query, ARRAY_A);
     }
     
+    /**
+     * Clean up old analytics data based on retention settings.
+     * 
+     * @return int|false Number of deleted records or false on failure.
+     */
     public function cleanup_old_data() {
         global $wpdb;
         
@@ -453,14 +472,11 @@ class Hoppr_Analytics {
         
         $deleted = $wpdb->query(
             $wpdb->prepare(
-                "DELETE FROM {$this->table_name} WHERE DATE(click_timestamp) < %s",
+                "DELETE FROM `" . esc_sql($this->table_name) . "` WHERE DATE(click_timestamp) < %s",
                 $cutoff_date
             )
         );
         
-        if ($deleted !== false) {
-            error_log("Hoppr: Cleaned up {$deleted} old analytics records");
-        }
         
         return $deleted;
     }
@@ -637,8 +653,8 @@ class Hoppr_Analytics {
                 a.country_code,
                 a.device_type,
                 a.referrer
-            FROM {$this->table_name} a
-            LEFT JOIN {$redirects_table} r ON a.redirect_id = r.id
+            FROM `" . esc_sql($this->table_name) . "` a
+            LEFT JOIN `" . esc_sql($redirects_table) . "` r ON a.redirect_id = r.id
             WHERE {$where}
             ORDER BY a.click_timestamp DESC
         ";

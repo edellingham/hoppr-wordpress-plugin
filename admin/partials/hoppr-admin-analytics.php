@@ -53,7 +53,7 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                 
                 <div class="hoppr-filter-group">
                     <input type="submit" class="button button-primary" value="<?php _e('Apply Filters', 'hoppr'); ?>">
-                    <a href="<?php echo admin_url('admin.php?page=hoppr-analytics'); ?>" class="button"><?php _e('Reset', 'hoppr'); ?></a>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-analytics')); ?>" class="button"><?php _e('Reset', 'hoppr'); ?></a>
                 </div>
             </div>
         </form>
@@ -83,7 +83,7 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                     <span class="dashicons dashicons-chart-line"></span>
                 </div>
                 <div class="hoppr-stat-content">
-                    <h3><?php echo number_format($total_clicks); ?></h3>
+                    <h3><?php echo esc_html(number_format($total_clicks)); ?></h3>
                     <p><?php _e('Total Clicks', 'hoppr'); ?></p>
                 </div>
             </div>
@@ -93,7 +93,7 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                     <span class="dashicons dashicons-groups"></span>
                 </div>
                 <div class="hoppr-stat-content">
-                    <h3><?php echo number_format($unique_clicks); ?></h3>
+                    <h3><?php echo esc_html(number_format($unique_clicks)); ?></h3>
                     <p><?php _e('Unique Visitors', 'hoppr'); ?></p>
                 </div>
             </div>
@@ -103,7 +103,7 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                     <span class="dashicons dashicons-performance"></span>
                 </div>
                 <div class="hoppr-stat-content">
-                    <h3><?php echo $conversion_rate; ?>%</h3>
+                    <h3><?php echo esc_html($conversion_rate); ?>%</h3>
                     <p><?php _e('Unique Rate', 'hoppr'); ?></p>
                 </div>
             </div>
@@ -113,7 +113,7 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                     <span class="dashicons dashicons-calendar-alt"></span>
                 </div>
                 <div class="hoppr-stat-content">
-                    <h3><?php echo ceil((strtotime($date_to) - strtotime($date_from)) / (60 * 60 * 24)) + 1; ?></h3>
+                    <h3><?php echo esc_html(ceil((strtotime($date_to) - strtotime($date_from)) / (60 * 60 * 24)) + 1); ?></h3>
                     <p><?php _e('Days Range', 'hoppr'); ?></p>
                 </div>
             </div>
@@ -146,7 +146,7 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                 <div class="hoppr-widget">
                     <div class="hoppr-widget-header">
                         <h2><?php _e('Top Performing Redirects', 'hoppr'); ?></h2>
-                        <a href="<?php echo admin_url('admin.php?page=hoppr-redirects'); ?>" class="button button-secondary"><?php _e('Manage', 'hoppr'); ?></a>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects')); ?>" class="button button-secondary"><?php _e('Manage', 'hoppr'); ?></a>
                     </div>
                     <div class="hoppr-widget-content">
                         <?php
@@ -179,8 +179,8 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                                                     <span class="dashicons dashicons-external"></span>
                                                 </a>
                                             </td>
-                                            <td><strong><?php echo number_format($redirect['click_count']); ?></strong></td>
-                                            <td><?php echo number_format($redirect['unique_clicks']); ?></td>
+                                            <td><strong><?php echo esc_html(number_format($redirect['click_count'])); ?></strong></td>
+                                            <td><?php echo esc_html(number_format($redirect['unique_clicks'])); ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -219,7 +219,7 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                                 <?php foreach ($countries as $country): ?>
                                     <div class="hoppr-country-item">
                                         <span class="hoppr-country-code"><?php echo esc_html($country['country_code']); ?></span>
-                                        <span class="hoppr-country-clicks"><?php echo number_format($country['clicks']); ?> <?php _e('clicks', 'hoppr'); ?></span>
+                                        <span class="hoppr-country-clicks"><?php echo esc_html(number_format($country['clicks'])); ?> <?php _e('clicks', 'hoppr'); ?></span>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
@@ -249,10 +249,10 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                                 <?php foreach ($devices as $device): ?>
                                     <div class="hoppr-device-item">
                                         <span class="hoppr-device-type">
-                                            <span class="dashicons dashicons-<?php echo $device['device_type'] === 'Mobile' ? 'smartphone' : ($device['device_type'] === 'Tablet' ? 'tablet' : 'desktop'); ?>"></span>
+                                            <span class="dashicons dashicons-<?php echo esc_attr($device['device_type'] === 'Mobile' ? 'smartphone' : ($device['device_type'] === 'Tablet' ? 'tablet' : 'desktop')); ?>"></span>
                                             <?php echo esc_html($device['device_type']); ?>
                                         </span>
-                                        <span class="hoppr-device-clicks"><?php echo number_format($device['clicks']); ?> <?php _e('clicks', 'hoppr'); ?></span>
+                                        <span class="hoppr-device-clicks"><?php echo esc_html(number_format($device['clicks'])); ?> <?php _e('clicks', 'hoppr'); ?></span>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
@@ -285,7 +285,7 @@ $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : dat
                                             <strong><?php echo esc_html(wp_trim_words($referrer['referrer'], 6, '...')); ?></strong>
                                         </div>
                                         <div class="hoppr-referrer-clicks">
-                                            <span><?php echo number_format($referrer['clicks']); ?></span>
+                                            <span><?php echo esc_html(number_format($referrer['clicks'])); ?></span>
                                             <small><?php _e('clicks', 'hoppr'); ?></small>
                                         </div>
                                     </div>
@@ -368,7 +368,7 @@ jQuery(document).ready(function($) {
             'date_to' => $date_to
         ));
         ?>
-        const clicksData = <?php echo json_encode($clicks_data); ?>;
+        const clicksData = <?php echo wp_json_encode($clicks_data); ?>;
         
         new Chart(document.getElementById('hoppr-clicks-chart'), {
             type: 'line',
@@ -419,7 +419,7 @@ jQuery(document).ready(function($) {
             'limit' => 8
         ));
         ?>
-        const countriesData = <?php echo json_encode($countries_data); ?>;
+        const countriesData = <?php echo wp_json_encode($countries_data); ?>;
         
         if (countriesData.length > 0) {
             new Chart(document.getElementById('hoppr-countries-chart'), {
@@ -454,7 +454,7 @@ jQuery(document).ready(function($) {
             'date_to' => $date_to
         ));
         ?>
-        const devicesData = <?php echo json_encode($devices_data); ?>;
+        const devicesData = <?php echo wp_json_encode($devices_data); ?>;
         
         if (devicesData.length > 0) {
             new Chart(document.getElementById('hoppr-devices-chart'), {
@@ -504,8 +504,8 @@ jQuery(document).ready(function($) {
         $(this).removeClass('button-secondary').addClass('button-primary');
         
         var period = $(this).data('period');
-        console.log('Chart period changed to:', period);
         // Here you would reload the chart data with the new period
+        // TODO: Implement chart period change functionality
     });
 });
 </script>

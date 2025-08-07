@@ -392,8 +392,18 @@ class Hoppr_Admin {
             HOPPR_TABLE_QR_CODES
         );
         
+        // Use safe table dropping with validation
+        $safe_tables = array(
+            $wpdb->prefix . 'hoppr_redirects',
+            $wpdb->prefix . 'hoppr_analytics',
+            $wpdb->prefix . 'hoppr_qr_codes'
+        );
+        
         foreach ($tables as $table) {
-            $wpdb->query("DROP TABLE IF EXISTS {$table}");
+            // Validate table name is in our expected list and matches expected pattern
+            if (in_array($table, $safe_tables, true) && preg_match('/^' . preg_quote($wpdb->prefix, '/') . 'hoppr_[a-zA-Z_]+$/', $table)) {
+                $wpdb->query("DROP TABLE IF EXISTS `" . esc_sql($table) . "`");
+            }
         }
         
         // Recreate tables using the activation method

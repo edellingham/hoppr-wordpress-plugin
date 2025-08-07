@@ -21,6 +21,12 @@ class Hoppr_Redirects {
         add_action('wp_ajax_hoppr_bulk_action', array($this, 'ajax_bulk_action'));
     }
     
+    /**
+     * Create a new redirect.
+     * 
+     * @param array $data Redirect data including source_url, destination_url, redirect_type, status.
+     * @return int|false The redirect ID on success, false on failure.
+     */
     public function create_redirect($data) {
         global $wpdb;
         
@@ -61,6 +67,13 @@ class Hoppr_Redirects {
         return $redirect_id;
     }
     
+    /**
+     * Update an existing redirect.
+     * 
+     * @param int $id The redirect ID to update.
+     * @param array $data The updated redirect data.
+     * @return bool True on success, false on failure.
+     */
     public function update_redirect($id, $data) {
         global $wpdb;
         
@@ -99,6 +112,12 @@ class Hoppr_Redirects {
         return true;
     }
     
+    /**
+     * Delete a redirect.
+     * 
+     * @param int $id The redirect ID to delete.
+     * @return bool True on success, false on failure.
+     */
     public function delete_redirect($id) {
         global $wpdb;
         
@@ -121,12 +140,18 @@ class Hoppr_Redirects {
         return true;
     }
     
+    /**
+     * Get a single redirect by ID.
+     * 
+     * @param int $id The redirect ID.
+     * @return object|null The redirect object or null if not found.
+     */
     public function get_redirect($id) {
         global $wpdb;
         
         $redirect = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$this->table_name} WHERE id = %d",
+                "SELECT * FROM `" . esc_sql($this->table_name) . "` WHERE id = %d",
                 $id
             ),
             ARRAY_A
@@ -135,6 +160,12 @@ class Hoppr_Redirects {
         return $redirect;
     }
     
+    /**
+     * Get multiple redirects based on criteria.
+     * 
+     * @param array $args Query arguments including status, orderby, order, limit, offset.
+     * @return array Array of redirect objects.
+     */
     public function get_redirects($args = array()) {
         global $wpdb;
         
@@ -174,7 +205,7 @@ class Hoppr_Redirects {
             $limit = $wpdb->prepare("LIMIT %d OFFSET %d", $args['limit'], $args['offset']);
         }
         
-        $query = "SELECT * FROM {$this->table_name} WHERE {$where} ORDER BY {$orderby} {$limit}";
+        $query = "SELECT * FROM `" . esc_sql($this->table_name) . "` WHERE {$where} ORDER BY {$orderby} {$limit}";
         
         if (!empty($where_values)) {
             $query = $wpdb->prepare($query, $where_values);
@@ -201,7 +232,7 @@ class Hoppr_Redirects {
             $where_values[] = $search_term;
         }
         
-        $query = "SELECT COUNT(*) FROM {$this->table_name} WHERE {$where}";
+        $query = "SELECT COUNT(*) FROM `" . esc_sql($this->table_name) . "` WHERE {$where}";
         
         if (!empty($where_values)) {
             $query = $wpdb->prepare($query, $where_values);
@@ -220,7 +251,7 @@ class Hoppr_Redirects {
         if ($redirect === false) {
             $redirect = $wpdb->get_row(
                 $wpdb->prepare(
-                    "SELECT * FROM {$this->table_name} WHERE source_url = %s AND status = 'active'",
+                    "SELECT * FROM `" . esc_sql($this->table_name) . "` WHERE source_url = %s AND status = 'active'",
                     $source_url
                 ),
                 ARRAY_A
@@ -233,6 +264,11 @@ class Hoppr_Redirects {
         return $redirect;
     }
     
+    /**
+     * Get all active redirects (cached for performance).
+     * 
+     * @return array Array of active redirect objects.
+     */
     public function get_active_redirects() {
         $cache_key = 'hoppr_active_redirects';
         $redirects = wp_cache_get($cache_key, 'hoppr_redirects');

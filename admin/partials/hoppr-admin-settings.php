@@ -29,8 +29,8 @@ $tabs = array(
     <!-- Tab Navigation -->
     <nav class="nav-tab-wrapper">
         <?php foreach ($tabs as $tab_key => $tab_label): ?>
-            <a href="<?php echo admin_url('admin.php?page=hoppr-settings&tab=' . $tab_key); ?>" 
-               class="nav-tab <?php echo $current_tab === $tab_key ? 'nav-tab-active' : ''; ?>">
+            <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-settings&tab=' . $tab_key)); ?>" 
+               class="nav-tab <?php echo esc_attr($current_tab === $tab_key ? 'nav-tab-active' : ''); ?>">
                 <?php echo esc_html($tab_label); ?>
             </a>
         <?php endforeach; ?>
@@ -292,15 +292,15 @@ $tabs = array(
                                 </tr>
                                 <tr>
                                     <td><strong><?php _e('Total Redirects:', 'hoppr'); ?></strong></td>
-                                    <td><?php echo number_format($hoppr->get_redirects()->get_redirects_count()); ?></td>
+                                    <td><?php echo esc_html(number_format($hoppr->get_redirects()->get_redirects_count())); ?></td>
                                 </tr>
                                 <tr>
                                     <td><strong><?php _e('Active Redirects:', 'hoppr'); ?></strong></td>
-                                    <td><?php echo number_format($hoppr->get_redirects()->get_redirects_count(array('status' => 'active'))); ?></td>
+                                    <td><?php echo esc_html(number_format($hoppr->get_redirects()->get_redirects_count(array('status' => 'active')))); ?></td>
                                 </tr>
                                 <tr>
                                     <td><strong><?php _e('Total Analytics Records:', 'hoppr'); ?></strong></td>
-                                    <td><?php echo number_format($hoppr->get_analytics()->get_total_clicks()); ?></td>
+                                    <td><?php echo esc_html(number_format($hoppr->get_analytics()->get_total_clicks())); ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -331,20 +331,20 @@ jQuery(document).ready(function($) {
     $('#hoppr-cleanup-analytics').on('click', function() {
         if (confirm('<?php _e('Are you sure you want to clean up old analytics data?', 'hoppr'); ?>')) {
             // AJAX call to cleanup analytics
-            console.log('Cleanup analytics data');
+            // TODO: Implement cleanup functionality
         }
     });
     
     $('#hoppr-optimize-tables').on('click', function() {
         if (confirm('<?php _e('Are you sure you want to optimize database tables?', 'hoppr'); ?>')) {
             // AJAX call to optimize tables
-            console.log('Optimize database tables');
+            // TODO: Implement table optimization
         }
     });
     
     $('#hoppr-export-settings').on('click', function() {
         // Trigger settings export
-        window.location.href = '<?php echo admin_url('admin-ajax.php?action=hoppr_export_settings&nonce=' . wp_create_nonce('hoppr_nonce')); ?>';
+        window.location.href = '<?php echo esc_js(esc_url(admin_url('admin-ajax.php?action=hoppr_export_settings&nonce=' . wp_create_nonce('hoppr_nonce')))); ?>';
     });
     
     $('#hoppr-import-settings').on('click', function() {
@@ -356,7 +356,7 @@ jQuery(document).ready(function($) {
         
         if (confirm('<?php _e('Are you sure you want to import these settings? This will overwrite your current configuration.', 'hoppr'); ?>')) {
             // Handle file import
-            console.log('Import settings file');
+            // TODO: Implement settings import
         }
     });
     
@@ -365,7 +365,7 @@ jQuery(document).ready(function($) {
             // AJAX call to reset settings
             $.post(ajaxurl, {
                 action: 'hoppr_reset_settings',
-                nonce: '<?php echo wp_create_nonce('hoppr_nonce'); ?>'
+                nonce: '<?php echo esc_js(wp_create_nonce('hoppr_nonce')); ?>'
             }, function(response) {
                 if (response.success) {
                     alert(response.data.message);

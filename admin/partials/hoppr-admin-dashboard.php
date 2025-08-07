@@ -12,7 +12,7 @@ $top_redirects = $this->get_top_redirects();
 
 <div class="wrap">
     <h1 class="wp-heading-inline"><?php _e('Hoppr Dashboard', 'hoppr'); ?></h1>
-    <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=add'); ?>" class="page-title-action"><?php _e('Add New Redirect', 'hoppr'); ?></a>
+    <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=add')); ?>" class="page-title-action"><?php _e('Add New Redirect', 'hoppr'); ?></a>
     <hr class="wp-header-end">
 
     <div class="hoppr-dashboard">
@@ -23,7 +23,7 @@ $top_redirects = $this->get_top_redirects();
                     <span class="dashicons dashicons-randomize"></span>
                 </div>
                 <div class="hoppr-stat-content">
-                    <h3><?php echo number_format($stats['total_redirects']); ?></h3>
+                    <h3><?php echo esc_html(number_format($stats['total_redirects'])); ?></h3>
                     <p><?php _e('Total Redirects', 'hoppr'); ?></p>
                 </div>
             </div>
@@ -33,7 +33,7 @@ $top_redirects = $this->get_top_redirects();
                     <span class="dashicons dashicons-yes-alt"></span>
                 </div>
                 <div class="hoppr-stat-content">
-                    <h3><?php echo number_format($stats['active_redirects']); ?></h3>
+                    <h3><?php echo esc_html(number_format($stats['active_redirects'])); ?></h3>
                     <p><?php _e('Active Redirects', 'hoppr'); ?></p>
                 </div>
             </div>
@@ -43,7 +43,7 @@ $top_redirects = $this->get_top_redirects();
                     <span class="dashicons dashicons-chart-bar"></span>
                 </div>
                 <div class="hoppr-stat-content">
-                    <h3><?php echo number_format($stats['total_clicks']); ?></h3>
+                    <h3><?php echo esc_html(number_format($stats['total_clicks'])); ?></h3>
                     <p><?php _e('Total Clicks', 'hoppr'); ?></p>
                 </div>
             </div>
@@ -53,7 +53,7 @@ $top_redirects = $this->get_top_redirects();
                     <span class="dashicons dashicons-calendar-alt"></span>
                 </div>
                 <div class="hoppr-stat-content">
-                    <h3><?php echo number_format($stats['clicks_today']); ?></h3>
+                    <h3><?php echo esc_html(number_format($stats['clicks_today'])); ?></h3>
                     <p><?php _e('Clicks Today', 'hoppr'); ?></p>
                 </div>
             </div>
@@ -65,7 +65,7 @@ $top_redirects = $this->get_top_redirects();
                 <div class="hoppr-widget">
                     <div class="hoppr-widget-header">
                         <h2><?php _e('Recent Redirects', 'hoppr'); ?></h2>
-                        <a href="<?php echo admin_url('admin.php?page=hoppr-redirects'); ?>" class="button button-secondary"><?php _e('View All', 'hoppr'); ?></a>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects')); ?>" class="button button-secondary"><?php _e('View All', 'hoppr'); ?></a>
                     </div>
                     <div class="hoppr-widget-content">
                         <?php if (!empty($recent_redirects)) : ?>
@@ -113,7 +113,7 @@ $top_redirects = $this->get_top_redirects();
                                 <span class="dashicons dashicons-randomize"></span>
                                 <h3><?php _e('No redirects yet', 'hoppr'); ?></h3>
                                 <p><?php _e('Create your first redirect to get started.', 'hoppr'); ?></p>
-                                <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=add'); ?>" class="button button-primary">
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=add')); ?>" class="button button-primary">
                                     <?php _e('Add New Redirect', 'hoppr'); ?>
                                 </a>
                             </div>
@@ -127,7 +127,7 @@ $top_redirects = $this->get_top_redirects();
                 <div class="hoppr-widget">
                     <div class="hoppr-widget-header">
                         <h2><?php _e('Top Performing (30 days)', 'hoppr'); ?></h2>
-                        <a href="<?php echo admin_url('admin.php?page=hoppr-analytics'); ?>" class="button button-secondary"><?php _e('View Analytics', 'hoppr'); ?></a>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-analytics')); ?>" class="button button-secondary"><?php _e('View Analytics', 'hoppr'); ?></a>
                     </div>
                     <div class="hoppr-widget-content">
                         <?php if (!empty($top_redirects)) : ?>
@@ -141,7 +141,7 @@ $top_redirects = $this->get_top_redirects();
                                             </span>
                                         </div>
                                         <div class="hoppr-click-count">
-                                            <span class="hoppr-clicks"><?php echo number_format($redirect['click_count']); ?></span>
+                                            <span class="hoppr-clicks"><?php echo esc_html(number_format($redirect['click_count'])); ?></span>
                                             <small><?php _e('clicks', 'hoppr'); ?></small>
                                         </div>
                                     </div>
@@ -163,19 +163,19 @@ $top_redirects = $this->get_top_redirects();
                     </div>
                     <div class="hoppr-widget-content">
                         <div class="hoppr-quick-actions">
-                            <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=add'); ?>" class="hoppr-quick-action">
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=add')); ?>" class="hoppr-quick-action">
                                 <span class="dashicons dashicons-plus-alt2"></span>
                                 <?php _e('Add New Redirect', 'hoppr'); ?>
                             </a>
-                            <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=import'); ?>" class="hoppr-quick-action">
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=import')); ?>" class="hoppr-quick-action">
                                 <span class="dashicons dashicons-upload"></span>
                                 <?php _e('Import Redirects', 'hoppr'); ?>
                             </a>
-                            <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=export'); ?>" class="hoppr-quick-action">
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=export')); ?>" class="hoppr-quick-action">
                                 <span class="dashicons dashicons-download"></span>
                                 <?php _e('Export Redirects', 'hoppr'); ?>
                             </a>
-                            <a href="<?php echo admin_url('admin.php?page=hoppr-settings'); ?>" class="hoppr-quick-action">
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-settings')); ?>" class="hoppr-quick-action">
                                 <span class="dashicons dashicons-admin-settings"></span>
                                 <?php _e('Settings', 'hoppr'); ?>
                             </a>

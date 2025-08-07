@@ -486,40 +486,39 @@ class Hoppr_Settings {
         $roles = $this->get_available_roles();
         $capabilities = $this->get_capability_labels();
         $permissions = $this->get_permissions();
+        ?>
+        <table class="hoppr-permissions-table widefat">
+            <thead>
+                <tr>
+                    <th><?php echo esc_html(__('Role', 'hoppr')); ?></th>
+                    <?php foreach ($capabilities as $cap => $label) : ?>
+                        <th><?php echo esc_html($label); ?></th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($roles as $role => $role_name) : ?>
+                    <tr>
+                        <td><strong><?php echo esc_html($role_name); ?></strong></td>
+                        <?php foreach ($capabilities as $cap => $label) : 
+                            $checked = isset($permissions[$role]) && in_array($cap, $permissions[$role]);
+                            $disabled = $role === 'administrator' ? 'disabled' : '';
+                        ?>
+                            <td>
+                                <input type="checkbox" 
+                                       name="hoppr_permissions[<?php echo esc_attr($role); ?>][]" 
+                                       value="<?php echo esc_attr($cap); ?>" 
+                                       <?php checked($checked, true); ?> 
+                                       <?php echo esc_attr($disabled); ?> />
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
         
-        echo '<table class="hoppr-permissions-table widefat">';
-        echo '<thead><tr><th>' . __('Role', 'hoppr') . '</th>';
-        
-        foreach ($capabilities as $cap => $label) {
-            echo '<th>' . esc_html($label) . '</th>';
-        }
-        
-        echo '</tr></thead><tbody>';
-        
-        foreach ($roles as $role => $role_name) {
-            echo '<tr>';
-            echo '<td><strong>' . esc_html($role_name) . '</strong></td>';
-            
-            foreach ($capabilities as $cap => $label) {
-                $checked = isset($permissions[$role]) && in_array($cap, $permissions[$role]);
-                $disabled = $role === 'administrator' ? 'disabled' : '';
-                
-                echo '<td>';
-                echo '<input type="checkbox" ';
-                echo 'name="hoppr_permissions[' . esc_attr($role) . '][]" ';
-                echo 'value="' . esc_attr($cap) . '" ';
-                echo checked($checked, true, false) . ' ';
-                echo $disabled . ' />';
-                echo '</td>';
-            }
-            
-            echo '</tr>';
-        }
-        
-        echo '</tbody></table>';
-        
-        if (in_array('administrator', array_keys($roles))) {
-            echo '<p class="description">' . __('Administrator role always has all permissions.', 'hoppr') . '</p>';
-        }
+        <?php if (in_array('administrator', array_keys($roles))) : ?>
+            <p class="description"><?php echo esc_html(__('Administrator role always has all permissions.', 'hoppr')); ?></p>
+        <?php endif;
     }
 }

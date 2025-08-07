@@ -18,7 +18,7 @@ $redirects = $hoppr->get_redirects();
     <h1 class="wp-heading-inline"><?php _e('Redirects', 'hoppr'); ?></h1>
     
     <?php if ($action === 'list'): ?>
-        <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=add'); ?>" class="page-title-action"><?php _e('Add New', 'hoppr'); ?></a>
+        <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=add')); ?>" class="page-title-action"><?php _e('Add New', 'hoppr'); ?></a>
         <hr class="wp-header-end">
 
         <!-- Filters and Search -->
@@ -63,8 +63,8 @@ $redirects = $hoppr->get_redirects();
                 </div>
                 
                 <div class="alignright actions">
-                    <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=import'); ?>" class="button"><?php _e('Import', 'hoppr'); ?></a>
-                    <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=export'); ?>" class="button"><?php _e('Export', 'hoppr'); ?></a>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=import')); ?>" class="button"><?php _e('Import', 'hoppr'); ?></a>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=export')); ?>" class="button"><?php _e('Export', 'hoppr'); ?></a>
                 </div>
             </div>
 
@@ -133,7 +133,7 @@ $redirects = $hoppr->get_redirects();
                                     <span class="dashicons dashicons-randomize"></span>
                                     <h3><?php _e('No redirects found', 'hoppr'); ?></h3>
                                     <p><?php _e('Create your first redirect to get started.', 'hoppr'); ?></p>
-                                    <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=add'); ?>" class="button button-primary">
+                                    <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=add')); ?>" class="button button-primary">
                                         <?php _e('Add New Redirect', 'hoppr'); ?>
                                     </a>
                                 </div>
@@ -147,19 +147,19 @@ $redirects = $hoppr->get_redirects();
                                 </th>
                                 <td class="source-url column-source">
                                     <strong>
-                                        <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=edit&id=' . $redirect['id']); ?>">
+                                        <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=edit&id=' . $redirect['id'])); ?>">
                                             <?php echo esc_html($redirect['source_url']); ?>
                                         </a>
                                     </strong>
                                     <div class="row-actions">
                                         <span class="edit">
-                                            <a href="<?php echo admin_url('admin.php?page=hoppr-redirects&action=edit&id=' . $redirect['id']); ?>"><?php _e('Edit', 'hoppr'); ?></a> |
+                                            <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects&action=edit&id=' . $redirect['id'])); ?>"><?php _e('Edit', 'hoppr'); ?></a> |
                                         </span>
                                         <span class="view">
                                             <a href="<?php echo esc_url(home_url('/' . $redirect['source_url'])); ?>" target="_blank" rel="noopener"><?php _e('Visit', 'hoppr'); ?></a> |
                                         </span>
                                         <span class="analytics">
-                                            <a href="<?php echo admin_url('admin.php?page=hoppr-analytics&redirect_id=' . $redirect['id']); ?>"><?php _e('Analytics', 'hoppr'); ?></a> |
+                                            <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-analytics&redirect_id=' . $redirect['id'])); ?>"><?php _e('Analytics', 'hoppr'); ?></a> |
                                         </span>
                                         <span class="trash">
                                             <a href="#" class="hoppr-delete" data-id="<?php echo esc_attr($redirect['id']); ?>" data-confirm="<?php _e('Are you sure you want to delete this redirect?', 'hoppr'); ?>"><?php _e('Delete', 'hoppr'); ?></a>
@@ -262,7 +262,7 @@ $redirects = $hoppr->get_redirects();
         
         <hr class="wp-header-end">
 
-        <form method="post" class="hoppr-form" data-action="<?php echo $action === 'add' ? 'hoppr_add_redirect' : 'hoppr_update_redirect'; ?>">
+        <form method="post" class="hoppr-form" data-action="<?php echo esc_attr($action === 'add' ? 'hoppr_add_redirect' : 'hoppr_update_redirect'); ?>">
             <?php if ($action === 'edit'): ?>
                 <input type="hidden" name="id" value="<?php echo esc_attr($redirect_id); ?>">
             <?php endif; ?>
@@ -279,7 +279,7 @@ $redirects = $hoppr->get_redirects();
                                 <td>
                                     <input type="text" id="source_url" name="source_url" value="<?php echo esc_attr($redirect_data['source_url']); ?>" class="regular-text" required placeholder="contact-us">
                                     <p class="description"><?php _e('Just the path after your domain (e.g., "contact-us" or "old-page")', 'hoppr'); ?></p>
-                                    <p class="description"><?php printf(__('This will redirect from: %s<strong>[your-path]</strong>', 'hoppr'), home_url('/') . '<strong>'); ?></strong></p>
+                                    <p class="description"><?php printf(__('This will redirect from: %s<strong>[your-path]</strong>', 'hoppr'), esc_html(home_url('/')) . '<strong>'); ?></strong></p>
                                 </td>
                             </tr>
                             
@@ -402,7 +402,7 @@ $redirects = $hoppr->get_redirects();
             
             <div class="hoppr-actions">
                 <input type="submit" class="button button-primary" value="<?php echo $action === 'add' ? __('Add Redirect', 'hoppr') : __('Update Redirect', 'hoppr'); ?>">
-                <a href="<?php echo admin_url('admin.php?page=hoppr-redirects'); ?>" class="button"><?php _e('Cancel', 'hoppr'); ?></a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page=hoppr-redirects')); ?>" class="button"><?php _e('Cancel', 'hoppr'); ?></a>
             </div>
             
             <?php wp_nonce_field('hoppr_nonce', 'nonce'); ?>

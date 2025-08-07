@@ -40,6 +40,12 @@ class Hoppr_QR_Codes {
         }
     }
     
+    /**
+     * Generate QR codes for a redirect.
+     * 
+     * @param int $redirect_id The redirect ID to generate QR codes for.
+     * @return bool True on success, false on failure.
+     */
     public function generate_qr_codes_for_redirect($redirect_id) {
         global $wpdb;
         
@@ -47,7 +53,7 @@ class Hoppr_QR_Codes {
         $redirects_table = HOPPR_TABLE_REDIRECTS;
         $redirect = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$redirects_table} WHERE id = %d",
+                "SELECT * FROM `" . esc_sql($redirects_table) . "` WHERE id = %d",
                 $redirect_id
             ),
             ARRAY_A
@@ -87,13 +93,19 @@ class Hoppr_QR_Codes {
         return $this->generate_qr_codes_for_redirect($redirect_id);
     }
     
+    /**
+     * Delete QR codes for a redirect.
+     * 
+     * @param int $redirect_id The redirect ID.
+     * @return bool True on success, false on failure.
+     */
     public function delete_qr_codes_for_redirect($redirect_id) {
         global $wpdb;
         
         // Get existing QR code record
         $qr_record = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$this->table_name} WHERE redirect_id = %d",
+                "SELECT * FROM `" . esc_sql($this->table_name) . "` WHERE redirect_id = %d",
                 $redirect_id
             ),
             ARRAY_A
@@ -120,12 +132,18 @@ class Hoppr_QR_Codes {
         return true;
     }
     
+    /**
+     * Get QR codes for a specific redirect.
+     * 
+     * @param int $redirect_id The redirect ID.
+     * @return array Array of QR code data including file paths and URLs.
+     */
     public function get_qr_codes_for_redirect($redirect_id) {
         global $wpdb;
         
         $qr_record = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$this->table_name} WHERE redirect_id = %d",
+                "SELECT * FROM `" . esc_sql($this->table_name) . "` WHERE redirect_id = %d",
                 $redirect_id
             ),
             ARRAY_A
@@ -221,8 +239,6 @@ class Hoppr_QR_Codes {
     }
     
     private function generate_qr_via_api($url, $filepath, $size = 300) {
-        // Debug: Log the URL being encoded
-        error_log('Hoppr QR Debug - URL being encoded: ' . $url);
         
         // Use QR Server API (free alternative to Google Charts)
         $api_url = 'https://api.qrserver.com/v1/create-qr-code/';
@@ -237,9 +253,6 @@ class Hoppr_QR_Codes {
         $query_string = http_build_query($params);
         $full_url = $api_url . '?' . $query_string;
         
-        // Debug: Log the full API URL
-        error_log('Hoppr QR Debug - QR Server API URL: ' . $full_url);
-        
         // Get the QR code image
         $response = wp_remote_get($full_url, array(
             'timeout' => 30,
@@ -249,25 +262,18 @@ class Hoppr_QR_Codes {
         ));
         
         if (is_wp_error($response)) {
-            error_log('Hoppr QR Debug - WP Error: ' . $response->get_error_message());
             return false;
         }
         
         $response_code = wp_remote_retrieve_response_code($response);
-        error_log('Hoppr QR Debug - Response code: ' . $response_code);
         
         if ($response_code !== 200) {
-            $response_body = wp_remote_retrieve_body($response);
-            error_log('Hoppr QR Debug - Error response body: ' . $response_body);
             return false;
         }
         
         $image_data = wp_remote_retrieve_body($response);
-        $image_size = strlen($image_data);
-        error_log('Hoppr QR Debug - Image data size: ' . $image_size . ' bytes');
         
         if (empty($image_data)) {
-            error_log('Hoppr QR Debug - Empty image data received');
             return false;
         }
         
@@ -480,8 +486,8 @@ class Hoppr_QR_Codes {
         $redirects_table = HOPPR_TABLE_REDIRECTS;
         $query = "
             SELECT r.id 
-            FROM {$redirects_table} r 
-            LEFT JOIN {$this->table_name} q ON r.id = q.redirect_id 
+            FROM `" . esc_sql($redirects_table) . "` r 
+            LEFT JOIN `" . esc_sql($this->table_name) . "` q ON r.id = q.redirect_id 
             WHERE q.redirect_id IS NULL AND r.status = 'active'
         ";
         

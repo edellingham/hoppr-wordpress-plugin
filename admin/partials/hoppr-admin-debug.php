@@ -57,9 +57,9 @@ global $wpdb;
                                 <td>
                                     <span class="hoppr-status-<?php echo esc_attr($status); ?>">
                                         <?php 
-                                        if ($status === 'good') echo '✓ Good';
-                                        elseif ($status === 'warning') echo '⚠ Warning';
-                                        else echo '✗ Issue';
+                                        if ($status === 'good') echo esc_html('✓ Good');
+                                        elseif ($status === 'warning') echo esc_html('⚠ Warning');
+                                        else echo esc_html('✗ Issue');
                                         ?>
                                     </span>
                                 </td>
@@ -94,14 +94,14 @@ global $wpdb;
                         
                         foreach ($tables as $name => $table):
                             $exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table)) === $table;
-                            $count = $exists ? $wpdb->get_var("SELECT COUNT(*) FROM {$table}") : 0;
+                            $count = $exists ? $wpdb->get_var("SELECT COUNT(*) FROM `" . esc_sql($table) . "`") : 0;
                         ?>
                             <tr>
                                 <td><strong><?php echo esc_html($name); ?></strong><br>
                                     <code><?php echo esc_html($table); ?></code></td>
                                 <td>
-                                    <span class="hoppr-status-<?php echo $exists ? 'active' : 'inactive'; ?>">
-                                        <?php echo $exists ? '✓ Exists' : '✗ Missing'; ?>
+                                    <span class="hoppr-status-<?php echo esc_attr($exists ? 'active' : 'inactive'); ?>">
+                                        <?php echo esc_html($exists ? '✓ Exists' : '✗ Missing'); ?>
                                     </span>
                                 </td>
                                 <td><?php echo esc_html($count); ?> records</td>
@@ -121,8 +121,8 @@ global $wpdb;
                 <?php
                 $recent_analytics = $wpdb->get_results(
                     "SELECT a.*, r.source_url 
-                     FROM " . HOPPR_TABLE_ANALYTICS . " a 
-                     LEFT JOIN " . HOPPR_TABLE_REDIRECTS . " r ON a.redirect_id = r.id 
+                     FROM `" . esc_sql(HOPPR_TABLE_ANALYTICS) . "` a 
+                     LEFT JOIN `" . esc_sql(HOPPR_TABLE_REDIRECTS) . "` r ON a.redirect_id = r.id 
                      ORDER BY a.click_timestamp DESC 
                      LIMIT 10",
                     ARRAY_A
@@ -307,7 +307,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'hoppr_test_analytics',
-                nonce: '<?php echo wp_create_nonce('hoppr_nonce'); ?>'
+                nonce: '<?php echo esc_js(wp_create_nonce('hoppr_nonce')); ?>'
             },
             success: function(response) {
                 if (response.success) {
@@ -332,7 +332,7 @@ jQuery(document).ready(function($) {
                 type: 'POST',
                 data: {
                     action: 'hoppr_clear_logs',
-                    nonce: '<?php echo wp_create_nonce('hoppr_nonce'); ?>'
+                    nonce: '<?php echo esc_js(wp_create_nonce('hoppr_nonce')); ?>'
                 },
                 success: function(response) {
                     if (response.success) {
@@ -355,7 +355,7 @@ jQuery(document).ready(function($) {
                 type: 'POST',
                 data: {
                     action: 'hoppr_recreate_tables',
-                    nonce: '<?php echo wp_create_nonce('hoppr_nonce'); ?>'
+                    nonce: '<?php echo esc_js(wp_create_nonce('hoppr_nonce')); ?>'
                 },
                 success: function(response) {
                     if (response.success) {

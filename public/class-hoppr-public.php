@@ -169,8 +169,7 @@ class Hoppr_Public {
         try {
             $this->analytics->track_click($analytics_data);
         } catch (Exception $e) {
-            // Log error but don't break the redirect
-            error_log('Hoppr Analytics Error: ' . $e->getMessage());
+            // Silently continue - don't break the redirect for analytics failures
         }
         
         // Also schedule async as backup (will work if cron is functioning)

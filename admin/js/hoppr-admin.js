@@ -5,6 +5,13 @@
 (function($) {
     'use strict';
 
+    // HTML Escaping utility function for XSS prevention
+    const escapeHtml = function(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    };
+
     // Main Hoppr Admin Object
     const HopprAdmin = {
         
@@ -268,14 +275,17 @@
             // Hide current row and show quick edit form
             $row.hide();
             
-            // Create quick edit form (simplified version)
+            // Create quick edit form (simplified version) - XSS protected
+            const sourceUrl = escapeHtml($row.find('.source-url').text());
+            const destinationUrl = escapeHtml($row.find('.destination-url').text());
+            
             const $quickEditRow = $(`
                 <tr class="hoppr-quick-edit-row">
                     <td colspan="6">
                         <form class="hoppr-quick-edit-form">
                             <div class="hoppr-quick-edit-fields">
-                                <label>Source URL: <input type="text" name="source_url" value="${$row.find('.source-url').text()}"></label>
-                                <label>Destination: <input type="text" name="destination_url" value="${$row.find('.destination-url').text()}"></label>
+                                <label>Source URL: <input type="text" name="source_url" value="${sourceUrl}"></label>
+                                <label>Destination: <input type="text" name="destination_url" value="${destinationUrl}"></label>
                                 <label>Type: 
                                     <select name="redirect_type">
                                         <option value="301">301</option>
@@ -436,28 +446,33 @@
             });
         },
         
-        // Update table view QR display
+        // Update table view QR display - XSS protected
         updateTableQRDisplay: function(qrCodes, $button) {
+            const pngUrl = escapeHtml(qrCodes.png_url);
+            const svgUrl = qrCodes.svg_url ? escapeHtml(qrCodes.svg_url) : '';
+            
             const qrHtml = `
                 <div class="hoppr-qr-actions-small">
-                    <a href="${qrCodes.png_url}" download class="button button-small">PNG</a>
-                    ${qrCodes.svg_url ? `<a href="${qrCodes.svg_url}" download class="button button-small">SVG</a>` : ''}
+                    <a href="${pngUrl}" download class="button button-small">PNG</a>
+                    ${svgUrl ? `<a href="${svgUrl}" download class="button button-small">SVG</a>` : ''}
                 </div>
             `;
             
             $button.closest('.column-qr').html(qrHtml);
         },
         
-        // Update edit screen QR display
+        // Update edit screen QR display - XSS protected
         updateEditScreenQRDisplay: function(qrCodes, $button) {
-            const redirectId = $button.data('id');
-            const sourceUrl = $('#source_url').val() || 'redirect';
-            const homeUrl = window.location.origin;
+            const redirectId = escapeHtml($button.data('id'));
+            const sourceUrl = escapeHtml($('#source_url').val() || 'redirect');
+            const homeUrl = escapeHtml(window.location.origin);
+            const pngUrl = escapeHtml(qrCodes.png_url);
+            const svgUrl = qrCodes.svg_url ? escapeHtml(qrCodes.svg_url) : '';
             
             const qrHtml = `
                 <div class="hoppr-qr-display">
                     <div class="hoppr-qr-preview">
-                        <img src="${qrCodes.png_url}" 
+                        <img src="${pngUrl}" 
                              alt="QR Code" 
                              width="200" height="200"
                              style="border: 1px solid #ddd; border-radius: 4px;">
@@ -467,12 +482,12 @@
                         <p class="description">This QR code redirects to your destination URL when scanned.</p>
                     </div>
                     <div class="hoppr-qr-actions">
-                        <a href="${qrCodes.png_url}" download class="button button-secondary">
+                        <a href="${pngUrl}" download class="button button-secondary">
                             <span class="dashicons dashicons-download"></span>
                             Download PNG
                         </a>
-                        ${qrCodes.svg_url ? `
-                            <a href="${qrCodes.svg_url}" download class="button button-secondary">
+                        ${svgUrl ? `
+                            <a href="${svgUrl}" download class="button button-secondary">
                                 <span class="dashicons dashicons-download"></span>
                                 Download SVG
                             </a>
@@ -494,9 +509,10 @@
             }
         },
 
-        // Utility Functions
+        // Utility Functions - XSS protected
         showNotice: function(message, type) {
-            type = type || 'info';
+            type = escapeHtml(type || 'info');
+            message = escapeHtml(message);
             
             const $notice = $(`
                 <div class="notice notice-${type} is-dismissible">

@@ -3,7 +3,7 @@
  * Plugin Name: Hoppr
  * Plugin URI: https://cloudnineweb.co
  * Description: Create and manage 301/302 redirects with comprehensive analytics tracking and QR code generation capabilities.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Cloud Nine Web
  * Author URI: https://cloudnineweb.co
  * License: GPL v2 or later
