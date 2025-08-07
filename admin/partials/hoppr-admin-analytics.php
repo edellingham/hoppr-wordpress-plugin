@@ -377,8 +377,8 @@ jQuery(document).ready(function($) {
                 datasets: [{
                     label: '<?php _e('Clicks', 'hoppr'); ?>',
                     data: clicksData.map(item => item.clicks),
-                    borderColor: '#0073aa',
-                    backgroundColor: 'rgba(0, 115, 170, 0.1)',
+                    borderColor: '#4F46E5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.1
@@ -429,8 +429,8 @@ jQuery(document).ready(function($) {
                     datasets: [{
                         data: countriesData.map(item => item.clicks),
                         backgroundColor: [
-                            '#0073aa', '#005a87', '#d63638', '#00a32a',
-                            '#ff922b', '#7c3aed', '#ec4899', '#06b6d4'
+                            '#4F46E5', '#7C3AED', '#A855F7', '#C084FC',
+                            '#E879F9', '#F0ABFC', '#F8BBD9', '#FDF2F8'
                         ]
                     }]
                 },
@@ -464,8 +464,8 @@ jQuery(document).ready(function($) {
                     datasets: [{
                         label: '<?php _e('Clicks', 'hoppr'); ?>',
                         data: devicesData.map(item => item.clicks),
-                        backgroundColor: ['#0073aa', '#00a32a', '#d63638'],
-                        borderColor: ['#005a87', '#008a20', '#b32d2e'],
+                        backgroundColor: ['#4F46E5', '#7C3AED', '#A855F7'],
+                        borderColor: ['#4338CA', '#6D28D9', '#9333EA'],
                         borderWidth: 1
                     }]
                 },
