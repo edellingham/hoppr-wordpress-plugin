@@ -660,35 +660,55 @@
 
 /* Clean FlyingPress-Inspired Design */
 
-/* Clean button styling to match FlyingPress */
-.hoppr-actions .button-primary {
-    background: #3b82f6 !important;
-    border: 1px solid #3b82f6 !important;
+/* FlyingPress-style buttons - solid purple */
+.hoppr-actions .button-primary,
+.button-primary,
+input[type="submit"].button-primary {
+    background: #8b5cf6 !important;
+    border: none !important;
     color: #ffffff !important;
-    padding: 8px 16px !important;
-    border-radius: 6px !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
     font-weight: 500 !important;
+    font-size: 14px !important;
     text-shadow: none !important;
-    box-shadow: none !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.15s ease !important;
+    cursor: pointer !important;
 }
 
-.hoppr-actions .button-primary:hover {
-    background: #2563eb !important;
-    border-color: #2563eb !important;
+.hoppr-actions .button-primary:hover,
+.button-primary:hover,
+input[type="submit"].button-primary:hover {
+    background: #7c3aed !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
-.hoppr-actions .button:not(.button-primary) {
+/* All secondary buttons */
+.hoppr-actions .button:not(.button-primary),
+.button:not(.button-primary),
+input[type="submit"]:not(.button-primary),
+.wp-core-ui .button {
     background: #ffffff !important;
-    border: 1px solid #d1d5db !important;
+    border: 1px solid #e5e7eb !important;
     color: #374151 !important;
-    padding: 8px 16px !important;
-    border-radius: 6px !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
     font-weight: 500 !important;
+    font-size: 14px !important;
+    transition: all 0.15s ease !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
 }
 
-.hoppr-actions .button:not(.button-primary):hover {
+.hoppr-actions .button:not(.button-primary):hover,
+.button:not(.button-primary):hover,
+input[type="submit"]:not(.button-primary):hover,
+.wp-core-ui .button:hover {
     background: #f9fafb !important;
-    border-color: #9ca3af !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
 }
 
 /* Clean status badges */
@@ -753,19 +773,108 @@
     margin-bottom: 16px !important;
 }
 
+/* FlyingPress-style QR buttons */
 .hoppr-qr-actions .button {
     background: #ffffff !important;
-    border: 1px solid #d1d5db !important;
+    border: 1px solid #e5e7eb !important;
+    color: #374151 !important;
+    padding: 8px 14px !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    transition: all 0.15s ease !important;
+}
+
+.hoppr-qr-actions .button:hover {
+    background: #f9fafb !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+}
+
+/* FlyingPress-style small buttons in tables */
+.wp-list-table .button {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
     color: #374151 !important;
     padding: 6px 12px !important;
     border-radius: 6px !important;
     font-size: 12px !important;
     font-weight: 500 !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
 }
 
-.hoppr-qr-actions .button:hover {
+.wp-list-table .button:hover {
     background: #f9fafb !important;
-    border-color: #9ca3af !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+}
+
+.wp-list-table .button.button-primary {
+    background: #8b5cf6 !important;
+    border: none !important;
+    color: #ffffff !important;
+}
+
+.wp-list-table .button.button-primary:hover {
+    background: #7c3aed !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Toggle Switch Styling - FlyingPress Style */
+.hoppr-toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.hoppr-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.hoppr-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e5e7eb;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.hoppr-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.hoppr-toggle input:checked + .hoppr-toggle-slider {
+    background-color: #8b5cf6;
+}
+
+.hoppr-toggle input:checked + .hoppr-toggle-slider:before {
+    transform: translateX(26px);
+}
+
+/* Hover effect for toggle */
+.hoppr-toggle:hover .hoppr-toggle-slider {
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+.hoppr-toggle input:checked:hover + .hoppr-toggle-slider {
+    background-color: #7c3aed;
 }
 
 /* Clean Stat Card Overrides */
@@ -851,6 +960,87 @@
     box-shadow: 0 0 0 1px #3b82f6 !important;
     outline: none !important;
     transform: none !important;
+}
+
+/* Modern Filter Styling */
+.hoppr-filter-form,
+.hoppr-analytics-filters,
+.subsubsub {
+    background: #ffffff !important;
+    padding: 16px 20px !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    margin-bottom: 20px !important;
+    box-shadow: none !important;
+}
+
+.hoppr-filter-row {
+    display: flex !important;
+    gap: 16px !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+}
+
+.hoppr-filter-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+}
+
+.hoppr-filter-group label {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin: 0 !important;
+}
+
+.hoppr-filter-group select,
+.hoppr-filter-group input[type="date"],
+.hoppr-filter-group input[type="text"] {
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    background: #ffffff !important;
+    color: #374151 !important;
+    min-width: 120px !important;
+}
+
+.hoppr-filter-group select:focus,
+.hoppr-filter-group input:focus {
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 0 1px #8b5cf6 !important;
+    outline: none !important;
+}
+
+/* Filter submit button */
+.hoppr-filter-form .button {
+    margin-top: 18px !important;
+}
+
+/* Clean up WordPress default filters */
+.subsubsub li {
+    margin: 0 8px 0 0 !important;
+}
+
+.subsubsub a {
+    color: #6b7280 !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    transition: all 0.15s ease !important;
+}
+
+.subsubsub a:hover,
+.subsubsub a.current {
+    background: #f3f4f6 !important;
+    color: #8b5cf6 !important;
+}
+
+.subsubsub .count {
+    color: #9ca3af !important;
+    font-weight: 400 !important;
 }
 
 /* Remove automatic dark mode - let WordPress handle it */

@@ -212,9 +212,13 @@ $redirects = $hoppr->get_redirects();
                                     <?php endif; ?>
                                 </td>
                                 <td class="column-actions">
-                                    <button type="button" class="button button-small hoppr-toggle-status" data-id="<?php echo esc_attr($redirect['id']); ?>">
-                                        <?php echo $redirect['status'] === 'active' ? __('Deactivate', 'hoppr') : __('Activate', 'hoppr'); ?>
-                                    </button>
+                                    <label class="hoppr-toggle">
+                                        <input type="checkbox" 
+                                               class="hoppr-toggle-status" 
+                                               data-id="<?php echo esc_attr($redirect['id']); ?>"
+                                               <?php checked($redirect['status'], 'active'); ?>>
+                                        <span class="hoppr-toggle-slider"></span>
+                                    </label>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

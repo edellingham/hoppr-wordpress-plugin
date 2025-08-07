@@ -25,7 +25,7 @@
             $(document).on('click', '#doaction, #doaction2', this.handleBulkActionSubmit);
             
             // Toggle redirects
-            $(document).on('click', '.hoppr-toggle-status', this.toggleRedirectStatus);
+            $(document).on('change', '.hoppr-toggle-status', this.toggleRedirectStatus);
             
             // Quick edit
             $(document).on('click', '.hoppr-quick-edit', this.showQuickEdit);
@@ -214,11 +214,13 @@
 
         // Toggle Redirect Status
         toggleRedirectStatus: function(e) {
-            e.preventDefault();
-            
             const $this = $(this);
             const redirectId = $this.data('id');
             const $row = $this.closest('tr');
+            const isChecked = $this.is(':checked');
+            
+            // Temporarily disable the toggle to prevent double-clicking
+            $this.prop('disabled', true);
             
             $.ajax({
                 url: hoppr_ajax.ajax_url,
@@ -236,13 +238,18 @@
                         $statusCell.addClass('hoppr-status-' + response.data.status);
                         $statusCell.text(response.data.status.charAt(0).toUpperCase() + response.data.status.slice(1));
                         
-                        // Update toggle button
-                        $this.text(response.data.status === 'active' ? 'Deactivate' : 'Activate');
+                        // Ensure the toggle reflects the actual status
+                        $this.prop('checked', response.data.status === 'active');
                         
                         HopprAdmin.showNotice(response.data.message, 'success');
                     } else {
+                        // Revert the toggle if the request failed
+                        $this.prop('checked', !isChecked);
                         HopprAdmin.showNotice(response.data || hoppr_ajax.strings.error, 'error');
                     }
+                    
+                    // Re-enable the toggle
+                    $this.prop('disabled', false);
                 },
                 error: function() {
                     HopprAdmin.showNotice(hoppr_ajax.strings.error, 'error');
