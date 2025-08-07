@@ -23,6 +23,11 @@ class Hoppr_Admin {
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_notices', array($this, 'admin_notices'));
         add_filter('plugin_action_links_' . HOPPR_PLUGIN_BASENAME, array($this, 'add_plugin_action_links'));
+        
+        // Debug AJAX handlers
+        add_action('wp_ajax_hoppr_test_analytics', array($this, 'ajax_test_analytics'));
+        add_action('wp_ajax_hoppr_clear_logs', array($this, 'ajax_clear_logs'));
+        add_action('wp_ajax_hoppr_recreate_tables', array($this, 'ajax_recreate_tables'));
     }
     
     public function add_admin_menu() {
@@ -70,6 +75,15 @@ class Hoppr_Admin {
             'manage_options',
             'hoppr-settings',
             array($this, 'display_settings_page')
+        );
+        
+        add_submenu_page(
+            'hoppr',
+            __('Debug', 'hoppr'),
+            __('Debug', 'hoppr'),
+            'manage_options',
+            'hoppr-debug',
+            array($this, 'display_debug_page')
         );
     }
     
@@ -215,6 +229,10 @@ class Hoppr_Admin {
         $this->render_admin_page('settings');
     }
     
+    public function display_debug_page() {
+        $this->render_admin_page('debug');
+    }
+    
     private function render_admin_page($page) {
         $template_path = HOPPR_PLUGIN_DIR . 'admin/partials/hoppr-admin-' . $page . '.php';
         
@@ -234,7 +252,8 @@ class Hoppr_Admin {
             'toplevel_page_hoppr',
             'hoppr_page_hoppr-redirects',
             'hoppr_page_hoppr-analytics',
-            'hoppr_page_hoppr-settings'
+            'hoppr_page_hoppr-settings',
+            'hoppr_page_hoppr-debug'
         );
         
         return in_array($hook, $hoppr_pages);
@@ -300,5 +319,89 @@ class Hoppr_Admin {
             'date_from' => date('Y-m-d', strtotime('-30 days')),
             'date_to' => date('Y-m-d')
         ));
+    }
+    
+    /**
+     * AJAX handler to test analytics tracking
+     */
+    public function ajax_test_analytics() {
+        check_ajax_referer('hoppr_nonce', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+        }
+        
+        // Test analytics tracking
+        $hoppr = hoppr_init();
+        $analytics = $hoppr->get_analytics();
+        
+        $test_data = array(
+            'redirect_id' => 999, // Test redirect ID
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'Test User Agent',
+            'referrer' => 'https://test-referrer.com',
+            'country_code' => 'US',
+            'device_type' => 'Desktop'
+        );
+        
+        $result = $analytics->track_click($test_data);
+        
+        if ($result) {
+            wp_send_json_success('Analytics tracking test successful. Check the Recent Analytics Data section.');
+        } else {
+            wp_send_json_error('Analytics tracking test failed. Check error logs.');
+        }
+    }
+    
+    /**
+     * AJAX handler to clear error logs
+     */
+    public function ajax_clear_logs() {
+        check_ajax_referer('hoppr_nonce', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+        }
+        
+        // Clear PHP error log if accessible
+        $log_file = ini_get('error_log');
+        if ($log_file && file_exists($log_file) && is_writable($log_file)) {
+            file_put_contents($log_file, '');
+            wp_send_json_success('Error logs cleared successfully.');
+        } else {
+            wp_send_json_error('Unable to clear error logs. Log file not accessible.');
+        }
+    }
+    
+    /**
+     * AJAX handler to recreate database tables
+     */
+    public function ajax_recreate_tables() {
+        check_ajax_referer('hoppr_nonce', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+        }
+        
+        global $wpdb;
+        
+        // Drop existing tables
+        $tables = array(
+            HOPPR_TABLE_REDIRECTS,
+            HOPPR_TABLE_ANALYTICS, 
+            HOPPR_TABLE_QR_CODES
+        );
+        
+        foreach ($tables as $table) {
+            $wpdb->query("DROP TABLE IF EXISTS {$table}");
+        }
+        
+        // Recreate tables using the activation method
+        try {
+            Hoppr::activate();
+            wp_send_json_success('Database tables recreated successfully.');
+        } catch (Exception $e) {
+            wp_send_json_error('Failed to recreate tables: ' . $e->getMessage());
+        }
     }
 }

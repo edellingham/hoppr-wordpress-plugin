@@ -164,8 +164,19 @@ class Hoppr_Public {
             'device_type' => $this->get_device_type()
         );
         
-        // Track asynchronously to avoid slowing down redirect
-        wp_schedule_single_event(time(), 'hoppr_track_click', array($analytics_data));
+        // Track synchronously for reliability in production environments
+        // WordPress cron often fails with caching plugins and server configurations
+        try {
+            $this->analytics->track_click($analytics_data);
+        } catch (Exception $e) {
+            // Log error but don't break the redirect
+            error_log('Hoppr Analytics Error: ' . $e->getMessage());
+        }
+        
+        // Also schedule async as backup (will work if cron is functioning)
+        if (function_exists('wp_schedule_single_event')) {
+            wp_schedule_single_event(time() + 1, 'hoppr_track_click', array($analytics_data));
+        }
     }
     
     private function get_client_ip() {

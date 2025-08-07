@@ -28,27 +28,45 @@ class Hoppr_Analytics {
     public function track_click($data) {
         global $wpdb;
         
+        // Debug logging for production troubleshooting
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('Hoppr: Attempting to track click for redirect ID ' . $data['redirect_id']);
+        }
+        
+        // Verify table exists
+        if (!$this->verify_table_exists()) {
+            error_log('Hoppr: Analytics table does not exist - ' . $this->table_name);
+            return false;
+        }
+        
         // Hash IP address for privacy
         $hashed_ip = $this->hash_ip($data['ip_address']);
         
+        $insert_data = array(
+            'redirect_id' => intval($data['redirect_id']),
+            'click_timestamp' => current_time('mysql'),
+            'ip_address' => $hashed_ip,
+            'country_code' => $this->sanitize_country_code($data['country_code']),
+            'device_type' => $this->sanitize_device_type($data['device_type']),
+            'referrer' => esc_url_raw($data['referrer']),
+            'user_agent' => sanitize_text_field($data['user_agent'])
+        );
+        
         $result = $wpdb->insert(
             $this->table_name,
-            array(
-                'redirect_id' => intval($data['redirect_id']),
-                'click_timestamp' => current_time('mysql'),
-                'ip_address' => $hashed_ip,
-                'country_code' => $this->sanitize_country_code($data['country_code']),
-                'device_type' => $this->sanitize_device_type($data['device_type']),
-                'referrer' => esc_url_raw($data['referrer']),
-                'user_agent' => sanitize_text_field($data['user_agent'])
-            ),
+            $insert_data,
             array(
                 '%d', '%s', '%s', '%s', '%s', '%s', '%s'
             )
         );
         
         if ($result === false) {
-            error_log('Hoppr: Failed to track click for redirect ID ' . $data['redirect_id']);
+            error_log('Hoppr: Failed to track click for redirect ID ' . $data['redirect_id'] . '. DB Error: ' . $wpdb->last_error);
+            error_log('Hoppr: Insert data: ' . print_r($insert_data, true));
+        } else {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('Hoppr: Successfully tracked click for redirect ID ' . $data['redirect_id']);
+            }
         }
         
         return $result !== false;
@@ -637,5 +655,20 @@ class Hoppr_Analytics {
         
         fclose($output);
         exit;
+    }
+    
+    /**
+     * Verify that the analytics table exists
+     * @return bool
+     */
+    private function verify_table_exists() {
+        global $wpdb;
+        
+        $table_exists = $wpdb->get_var($wpdb->prepare(
+            "SHOW TABLES LIKE %s",
+            $this->table_name
+        ));
+        
+        return $table_exists === $this->table_name;
     }
 }
